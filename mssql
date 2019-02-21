@@ -1,0 +1,30 @@
+#!/usr/bin/python
+import pymssql
+
+conn = pymssql.connect(
+        server='connection-name from ~/.freetds.conf',
+        user='user',
+        password='password',
+        database='dbname')
+
+cursor = conn.cursor()
+cursor.execute("""
+        SELECT pod.pod, pod.internal_premise_id, pod.internal_installation_id,
+            pod.internal_contract_id, pod.internal_contract_acc_id,
+            pod.internal_partner_id
+        FROM DM_ODS.pod_info AS pod
+        ORDER BY pod.pod DESC
+        ;""")
+row = cursor.fetchone()
+i = 0
+while row:
+    print row[0].encode('utf-8').strip() \
+            + " " + row[1].encode('utf-8').strip() \
+            + " " + row[2].encode('utf-8').strip() \
+            + " " + row[3].encode('utf-8').strip() \
+            + " " + row[4].encode('utf-8').strip() \
+            + " " + row[5].encode('utf-8').strip()
+    row = cursor.fetchone()
+    i += 1
+    if i > 50:
+        break
